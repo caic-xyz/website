@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "website",
+	"name": "caic-xyz",
 	"compatibility_date": "2026-02-23",
 	"assets": {
 		// The path to the directory containing the `index.html` file to be served at `/`
