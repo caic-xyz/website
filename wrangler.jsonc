@@ -5,16 +5,42 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "caic-xyz",
+	"main": "src/index.ts",
 	"compatibility_date": "2026-02-23",
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_sqlite_classes": ["WaitlistDO"]
+		}
+	],
 	"assets": {
-		// The path to the directory containing the `index.html` file to be served at `/`
 		"directory": "./public"
 	},
 	"observability": {
 		"enabled": true
 	},
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "WAITLIST",
+				"class_name": "WaitlistDO"
+			}
+		]
+	},
+	"observability": {
+		"enabled": true
+	},
+	"define": {
+		"BUILD_VERSION": "\"dev\""
+	},
 	"compatibility_flags": [
 		"nodejs_compat"
+	],
+	"routes": [
+		{
+			"pattern": "caic.xyz",
+			"custom_domain": true
+		}
 	]
 	/**
 	 * Smart Placement
