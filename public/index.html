@@ -136,7 +136,22 @@
 				padding: 2rem;
 				max-width: 520px;
 				width: 90%;
-				margin: 2rem auto;
+				margin: auto;
+				flex-shrink: 0;
+			}
+
+			@media (max-width: 600px) {
+				.overlay {
+					align-items: flex-start;
+				}
+
+				.form-panel {
+					width: 100%;
+					margin: 0;
+					border-left: none;
+					border-right: none;
+					padding: 1.5rem 1rem;
+				}
 			}
 
 			.form-panel h2 {
@@ -302,7 +317,7 @@
 			</button>
 		</main>
 
-		<div id="waitlist-overlay" class="overlay" onclick="if(event.target===this)this.classList.remove('open')">
+		<div id="waitlist-overlay" class="overlay">
 			<div class="form-panel">
 				<h2>waitlist</h2>
 				<form id="waitlist-form">
