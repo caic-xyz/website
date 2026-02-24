@@ -43,14 +43,18 @@
 				color: var(--accent);
 			}
 
-			h1::before { content: '> '; }
+			h1::before {
+				content: '> ';
+			}
 
 			ul {
 				list-style: none;
 				padding: 0;
 			}
 
-			li { margin-bottom: 1.5rem; }
+			li {
+				margin-bottom: 1.5rem;
+			}
 
 			a {
 				color: var(--accent);
@@ -59,7 +63,9 @@
 				transition: border-color 0.2s ease;
 			}
 
-			a:hover { border-bottom-color: var(--accent); }
+			a:hover {
+				border-bottom-color: var(--accent);
+			}
 
 			.repo-desc {
 				display: block;
@@ -79,8 +85,15 @@
 			}
 
 			@keyframes blink {
-				0%, 100% { opacity: 1; }
-				50% { opacity: 0; }
+
+				0%,
+				100% {
+					opacity: 1;
+				}
+
+				50% {
+					opacity: 0;
+				}
 			}
 
 			/* Waitlist button */
@@ -112,7 +125,9 @@
 				z-index: 10;
 			}
 
-			.overlay.open { display: flex; }
+			.overlay.open {
+				display: flex;
+			}
 
 			.form-panel {
 				background: var(--bg);
@@ -129,9 +144,13 @@
 				margin: 0 0 1.5rem;
 			}
 
-			.form-panel h2::before { content: '> '; }
+			.form-panel h2::before {
+				content: '> ';
+			}
 
-			.form-group { margin-bottom: 1.5rem; }
+			.form-group {
+				margin-bottom: 1.5rem;
+			}
 
 			.form-group label {
 				display: block;
@@ -209,11 +228,11 @@
 
 			<ul>
 				<li>
-					<a href="https://github.com/caic-xyz/caic">caic-xyz/caic</a>
+					<a href="https://github.com/caic-xyz/caic">github.com/caic-xyz/caic</a>
 					<span class="repo-desc">Coding Agents in Containers</span>
 				</li>
 				<li>
-					<a href="https://github.com/caic-xyz/md">caic-xyz/md</a>
+					<a href="https://github.com/caic-xyz/md">github.com/caic-xyz/md</a>
 					<span class="repo-desc">My Development containers</span>
 				</li>
 			</ul>
@@ -236,7 +255,8 @@
 						<textarea id="q-pay" name="pay" required></textarea>
 					</div>
 					<div class="form-actions">
-						<button type="button" class="btn-cancel" onclick="document.getElementById('waitlist-overlay').classList.remove('open')">cancel</button>
+						<button type="button" class="btn-cancel"
+							onclick="document.getElementById('waitlist-overlay').classList.remove('open')">cancel</button>
 						<button type="submit" class="btn-submit">submit</button>
 					</div>
 					<div id="form-msg" class="form-msg"></div>
@@ -258,7 +278,7 @@
 				try {
 					const res = await fetch('/api/waitlist', {
 						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
+						headers: {'Content-Type': 'application/json'},
 						body: JSON.stringify({
 							pain: form.pain.value,
 							pay: form.pay.value,
