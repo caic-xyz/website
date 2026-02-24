@@ -64,6 +64,10 @@ export class WaitlistDO extends DurableObject<Env> {
 		);
 	}
 
+	async delete(id: number): Promise<void> {
+		this.ctx.storage.sql.exec("DELETE FROM submissions WHERE id = ?", id);
+	}
+
 	async list(): Promise<Submission[]> {
 		return this.ctx.storage.sql
 			.exec("SELECT id, email, max_agents, pain, pay, target_platforms, dev_os, created_at FROM submissions ORDER BY id DESC")
@@ -114,6 +118,22 @@ export default {
 			return handleLogout();
 		}
 
+		const deleteMatch = url.pathname.match(/^\/admin\/waitlist\/(\d+)$/);
+		if (deleteMatch && request.method === "DELETE") {
+			const email = await verifySession(request, env);
+			if (!email) {
+				return Response.json({ error: "unauthorized" }, { status: 401 });
+			}
+			const allowed = env.ALLOWED_EMAILS.split(",").map(e => e.trim());
+			if (!allowed.includes(email)) {
+				return Response.json({ error: "forbidden" }, { status: 403 });
+			}
+			const id = parseInt(deleteMatch[1], 10);
+			const stub = env.WAITLIST.get(env.WAITLIST.idFromName("waitlist"));
+			await stub.delete(id);
+			return Response.json({ ok: true });
+		}
+
 		if (url.pathname === "/admin/waitlist" && request.method === "GET") {
 			const email = await verifySession(request, env);
 			if (!email) {
@@ -126,7 +146,7 @@ export default {
 				try { return (JSON.parse(json) as string[]).map(esc).join(", "); } catch { return esc(json); }
 			};
 			const tableRows = rows.map(r =>
-				`<tr><td>${r.id}</td><td>${esc(r.email)}</td><td>${r.max_agents}</td><td>${esc(r.pain)}</td><td>${esc(r.pay)}</td><td>${fmtArr(r.target_platforms)}</td><td>${fmtArr(r.dev_os)}</td><td>${esc(r.created_at)}</td></tr>`
+				`<tr id="row-${r.id}"><td>${r.id}</td><td>${esc(r.email)}</td><td>${r.max_agents}</td><td>${esc(r.pain)}</td><td>${esc(r.pay)}</td><td>${fmtArr(r.target_platforms)}</td><td>${fmtArr(r.dev_os)}</td><td>${esc(r.created_at)}</td><td><button class="del" onclick="del(${r.id})" title="Delete">&#x1F5D1;</button></td></tr>`
 			).join("\n");
 			const html = `<!doctype html>
 <html lang="en">
@@ -145,6 +165,8 @@ th{color:var(--accent);border-color:var(--accent)}
 td{white-space:pre-wrap;max-width:300px}
 .empty{color:var(--dim);margin-top:1rem}
 .count{color:var(--dim);font-size:0.85rem}
+.del{background:none;border:none;cursor:pointer;font-size:1rem;padding:0.2rem 0.4rem;opacity:0.5;transition:opacity 0.15s}
+.del:hover{opacity:1}
 </style>
 </head>
 <body>
@@ -152,7 +174,10 @@ td{white-space:pre-wrap;max-width:300px}
 <p class="count">${rows.length} total</p>
 ${rows.length === 0
 	? '<p class="empty"># no submissions yet</p>'
-	: `<table><thead><tr><th>#</th><th>email</th><th>max agents</th><th>pain</th><th>pay</th><th>target platforms</th><th>dev os</th><th>time</th></tr></thead><tbody>${tableRows}</tbody></table>`}
+	: `<table><thead><tr><th>#</th><th>email</th><th>max agents</th><th>pain</th><th>pay</th><th>target platforms</th><th>dev os</th><th>time</th><th></th></tr></thead><tbody>${tableRows}</tbody></table>`}
+<script>
+async function del(id){if(!confirm('Delete submission '+id+'?'))return;const r=await fetch('/admin/waitlist/'+id,{method:'DELETE'});if(r.ok){document.getElementById('row-'+id)?.remove()}else{alert('Failed: '+(await r.text()))}}
+</script>
 </body>
 </html>`;
 			return new Response(html, { headers: { "Content-Type": "text/html;charset=UTF-8" } });
