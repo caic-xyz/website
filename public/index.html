@@ -7,12 +7,118 @@
 		<meta name="description" content="Coding Agents in Containers" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="apple-touch-icon" href="/icon-192.png" />
-		<title>caic</title>
+		<title>caic.xyz</title>
+		<style>
+			:root {
+				--bg: #0a0a0a;
+				--fg: #e0e0e0;
+				--accent: #00ff41;
+				/* classic terminal green */
+				--dim: #666;
+				--font: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+			}
+
+			body {
+				background-color: var(--bg);
+				color: var(--fg);
+				font-family: var(--font);
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				min-height: 100vh;
+				margin: 0;
+				padding: 2rem;
+				line-height: 1.6;
+			}
+
+			main {
+				max-width: 600px;
+				width: 100%;
+			}
+
+			h1 {
+				font-size: 1.5rem;
+				font-weight: normal;
+				margin-bottom: 2rem;
+				color: var(--accent);
+			}
+
+			h1::before {
+				content: '> ';
+			}
+
+			p {
+				margin-bottom: 2rem;
+				color: var(--fg);
+			}
+
+			ul {
+				list-style: none;
+				padding: 0;
+			}
+
+			li {
+				margin-bottom: 1.5rem;
+			}
+
+			a {
+				color: var(--accent);
+				text-decoration: none;
+				border-bottom: 1px solid transparent;
+				transition: border-color 0.2s ease;
+			}
+
+			a:hover {
+				border-bottom-color: var(--accent);
+			}
+
+			.repo-desc {
+				display: block;
+				font-size: 0.9rem;
+				color: var(--dim);
+				margin-top: 0.25rem;
+			}
+
+			.cursor {
+				display: inline-block;
+				width: 0.6em;
+				height: 1.2em;
+				background-color: var(--accent);
+				vertical-align: middle;
+				margin-left: 0.2rem;
+				animation: blink 1s step-end infinite;
+			}
+
+			@keyframes blink {
+
+				0%,
+				100% {
+					opacity: 1;
+				}
+
+				50% {
+					opacity: 0;
+				}
+			}
+		</style>
 	</head>
 
 	<body>
-		<h1 id="heading">caic</h1>
-		<p>Coding Agents in Containers</p>
+		<main>
+			<h1 id="heading">caic.xyz<span class="cursor"></span></h1>
+
+			<ul>
+				<li>
+					<a href="https://github.com/caic-xyz/caic">caic-xyz/caic</a>
+					<span class="repo-desc">Coding Agents in Containers</span>
+				</li>
+				<li>
+					<a href="https://github.com/caic-xyz/md">caic-xyz/md</a>
+					<span class="repo-desc">My Development containers</span>
+				</li>
+			</ul>
+		</main>
 	</body>
 
 </html>
