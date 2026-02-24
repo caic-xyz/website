@@ -316,6 +316,10 @@
 					<a href="https://github.com/caic-xyz/md">github.com/caic-xyz/md</a>
 					<span class="repo-desc">My Development containers</span>
 				</li>
+				<li id="discord-item" style="display:none;">
+					<a id="discord-link" href="https://discord.com/widget?id=1475502872564338822" target="_blank" rel="noopener">discord.gg/caic</a>
+					<span class="repo-desc">Join our Discord — <span id="discord-count">…</span> online</span>
+				</li>
 			</ul>
 
 			<button class="waitlist-btn" onclick="document.getElementById('waitlist-overlay').classList.add('open')">
@@ -385,6 +389,18 @@
 			function getChecked(name) {
 				return [...document.querySelectorAll('input[name="' + name + '"]:checked')].map(el => el.value);
 			}
+
+			fetch('https://discord.com/api/guilds/1475502872564338822/widget.json')
+				.then(r => r.json())
+				.then(data => {
+					const item = document.getElementById('discord-item');
+					const link = document.getElementById('discord-link');
+					const count = document.getElementById('discord-count');
+					if (data.instant_invite) link.href = data.instant_invite;
+					count.textContent = (data.presence_count || 0) + ' members';
+					item.style.display = '';
+				})
+				.catch(() => {});
 
 			document.getElementById('waitlist-form').addEventListener('submit', async (e) => {
 				e.preventDefault();
