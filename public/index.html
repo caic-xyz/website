@@ -170,14 +170,14 @@
 				margin-bottom: 1.5rem;
 			}
 
-			.form-group > label {
+			.form-group>label {
 				display: block;
 				color: var(--fg);
 				font-size: 0.85rem;
 				margin-bottom: 0.4rem;
 			}
 
-			.form-group > label::before {
+			.form-group>label::before {
 				content: '# ';
 				color: var(--dim);
 			}
@@ -337,9 +337,11 @@
 							<label><input type="checkbox" name="target_platforms" value="Android"> Android</label>
 							<label><input type="checkbox" name="target_platforms" value="XBox"> XBox</label>
 							<label><input type="checkbox" name="target_platforms" value="Playstation"> Playstation</label>
-							<label><input type="checkbox" name="target_platforms" value="Micro-controllers"> Micro-controllers (ESP32, STM32, etc)</label>
+							<label><input type="checkbox" name="target_platforms" value="Micro-controllers"> Micro-controllers (ESP32,
+								STM32, etc)</label>
 							<span class="other-label">Other:</span>
-							<textarea id="platform-other" class="other-text" name="target_platforms_other" rows="2" placeholder="specify..."></textarea>
+							<textarea id="platform-other" class="other-text" name="target_platforms_other" rows="2"
+								placeholder="specify..."></textarea>
 						</div>
 					</div>
 					<div class="form-group">
@@ -349,7 +351,8 @@
 							<label><input type="checkbox" name="dev_os" value="macOS"> macOS</label>
 							<label><input type="checkbox" name="dev_os" value="Linux"> Linux</label>
 							<span class="other-label">Other:</span>
-							<textarea id="dev-os-other" class="other-text" name="dev_os_other" rows="2" placeholder="specify..."></textarea>
+							<textarea id="dev-os-other" class="other-text" name="dev_os_other" rows="1"
+								placeholder="specify..."></textarea>
 						</div>
 					</div>
 					<div class="form-group">
@@ -361,7 +364,7 @@
 						<textarea id="q-pay" name="pay" rows="2" required></textarea>
 					</div>
 					<div class="form-group">
-						<label for="q-email">Email</label>
+						<label for="q-email">Email address where we can reach you?</label>
 						<input type="email" id="q-email" name="email" required />
 					</div>
 					<div class="form-actions">
