@@ -235,7 +235,6 @@
 				resize: vertical;
 				box-sizing: border-box;
 				margin-top: 0.3rem;
-				display: none;
 			}
 
 			.other-text:focus {
@@ -330,7 +329,7 @@
 							<label><input type="checkbox" name="platform" value="XBox"> XBox</label>
 							<label><input type="checkbox" name="platform" value="Playstation"> Playstation</label>
 							<label><input type="checkbox" name="platform" value="Micro-controllers"> Micro-controllers (ESP32, STM32, etc)</label>
-							<label><input type="checkbox" name="platform" value="Other" onchange="document.getElementById('platform-other').style.display=this.checked?'block':'none'"> Other</label>
+							<label><input type="checkbox" name="platform" value="Other"> Other</label>
 							<textarea id="platform-other" class="other-text" name="platform_other" placeholder="specify..."></textarea>
 						</div>
 					</div>
@@ -340,7 +339,7 @@
 							<label><input type="checkbox" name="dev_os" value="Windows"> Windows</label>
 							<label><input type="checkbox" name="dev_os" value="macOS"> macOS</label>
 							<label><input type="checkbox" name="dev_os" value="Linux"> Linux</label>
-							<label><input type="checkbox" name="dev_os" value="Other" onchange="document.getElementById('dev-os-other').style.display=this.checked?'block':'none'"> Other</label>
+							<label><input type="checkbox" name="dev_os" value="Other"> Other</label>
 							<textarea id="dev-os-other" class="other-text" name="dev_os_other" placeholder="specify..."></textarea>
 						</div>
 					</div>
@@ -396,12 +395,12 @@
 						throw new Error(err.error || 'submission failed');
 					}
 
-					msg.textContent = '> submitted. we\'ll be in touch.';
-					msg.style.color = 'var(--accent)';
-					msg.style.display = 'block';
 					form.reset();
-					document.getElementById('platform-other').style.display = 'none';
-					document.getElementById('dev-os-other').style.display = 'none';
+					document.getElementById('waitlist-overlay').classList.remove('open');
+					const btn = document.querySelector('.waitlist-btn');
+					btn.textContent = '> submitted. we\'ll be in touch.';
+					btn.disabled = true;
+					btn.style.cursor = 'default';
 				} catch (err) {
 					msg.textContent = '> error: ' + err.message;
 					msg.style.color = '#ff4141';
