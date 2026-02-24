@@ -364,21 +364,31 @@
 				const msg = document.getElementById('form-msg');
 				const submit = form.querySelector('.btn-submit');
 
-				submit.disabled = true;
-				submit.textContent = 'submitting...';
 				msg.style.display = 'none';
 
 				try {
+					if (!form.pain.value.trim() || !form.pay.value.trim()) {
+						throw new Error('please fill in all text fields');
+					}
 					const target_platforms = getChecked('target_platforms');
 					const otherPlatform = form.target_platforms_other.value.trim();
 					if (otherPlatform) {
 						target_platforms.push(otherPlatform);
+					}
+					if (target_platforms.length === 0) {
+						throw new Error('select at least one target platform');
 					}
 					const dev_os = getChecked('dev_os');
 					const otherOs = form.dev_os_other.value.trim();
 					if (otherOs) {
 						dev_os.push(otherOs);
 					}
+					if (dev_os.length === 0) {
+						throw new Error('select at least one development OS');
+					}
+
+					submit.disabled = true;
+					submit.textContent = 'submitting...';
 
 					const res = await fetch('/api/waitlist', {
 						method: 'POST',
