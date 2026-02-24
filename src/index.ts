@@ -113,11 +113,23 @@ export default {
 						`**Pain:** ${pain}`,
 						`**Pay:** ${pay}`,
 					].join("\n");
-					fetch(env.DISCORD_WEBHOOK_URL, {
-						method: "POST",
-						headers: { "Content-Type": "application/json" },
-						body: JSON.stringify({ content }),
-					}).catch(() => {});
+					try {
+						const resp = await fetch(env.DISCORD_WEBHOOK_URL, {
+							method: "POST",
+							headers: { "Content-Type": "application/json" },
+							body: JSON.stringify({ content }),
+						});
+						if (resp.ok) {
+							console.log(`Discord webhook succeeded: ${resp.status}`);
+						} else {
+							const respBody = await resp.text();
+							console.error(`Discord webhook failed: ${resp.status} ${resp.statusText} - ${respBody}`);
+						}
+					} catch (err) {
+						console.error(`Discord webhook error: ${err}`);
+					}
+				} else {
+					console.warn("DISCORD_WEBHOOK_URL not configured, skipping notification");
 				}
 
 				return Response.json({ ok: true });
