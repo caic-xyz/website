@@ -1,7 +1,12 @@
 import { DurableObject } from "cloudflare:workers";
+import { handleCallback, handleLogin, handleLogout, verifySession } from "./auth";
 
 interface Env {
 	WAITLIST: DurableObjectNamespace<WaitlistDO>;
+	GOOGLE_CLIENT_ID: string;
+	GOOGLE_CLIENT_SECRET: string;
+	SESSION_SECRET: string;
+	ALLOWED_EMAILS: string;
 }
 
 interface Submission {
@@ -90,7 +95,23 @@ export default {
 			}
 		}
 
+		if (url.pathname === "/auth/google" && request.method === "GET") {
+			return handleLogin(env, url.origin);
+		}
+
+		if (url.pathname === "/auth/callback" && request.method === "GET") {
+			return handleCallback(request, env);
+		}
+
+		if (url.pathname === "/auth/logout" && request.method === "GET") {
+			return handleLogout();
+		}
+
 		if (url.pathname === "/admin/waitlist" && request.method === "GET") {
+			const email = await verifySession(request, env);
+			if (!email) {
+				return Response.redirect(`${url.origin}/auth/google`, 302);
+			}
 			const stub = env.WAITLIST.get(env.WAITLIST.idFromName("waitlist"));
 			const rows = await stub.list();
 			const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
