@@ -20,7 +20,7 @@ export class WaitlistDO extends DurableObject<Env> {
 		this.ctx.storage.sql.exec(`
 			CREATE TABLE IF NOT EXISTS submissions (
 				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				email TEXT NOT NULL,
+				email TEXT NOT NULL DEFAULT '',
 				pain TEXT NOT NULL,
 				pay TEXT NOT NULL,
 				platform TEXT NOT NULL DEFAULT '',
@@ -28,6 +28,19 @@ export class WaitlistDO extends DurableObject<Env> {
 				created_at TEXT NOT NULL DEFAULT (datetime('now'))
 			)
 		`);
+		// Migrate: add columns that may not exist on already-deployed tables.
+		const cols = new Set(
+			this.ctx.storage.sql.exec("PRAGMA table_info(submissions)").toArray().map((r: any) => r.name as string)
+		);
+		if (!cols.has("email")) {
+			this.ctx.storage.sql.exec("ALTER TABLE submissions ADD COLUMN email TEXT NOT NULL DEFAULT ''");
+		}
+		if (!cols.has("platform")) {
+			this.ctx.storage.sql.exec("ALTER TABLE submissions ADD COLUMN platform TEXT NOT NULL DEFAULT ''");
+		}
+		if (!cols.has("dev_os")) {
+			this.ctx.storage.sql.exec("ALTER TABLE submissions ADD COLUMN dev_os TEXT NOT NULL DEFAULT ''");
+		}
 	}
 
 	async submit(email: string, pain: string, pay: string, platform: string[], devOs: string[]): Promise<void> {
