@@ -3,6 +3,7 @@ import { handleCallback, handleLogin, handleLogout, verifySession } from "./auth
 
 interface Env {
 	WAITLIST: DurableObjectNamespace<WaitlistDO>;
+	DISCORD_WEBHOOK_URL: string;
 	GOOGLE_CLIENT_ID: string;
 	GOOGLE_CLIENT_SECRET: string;
 	SESSION_SECRET: string;
@@ -99,6 +100,25 @@ export default {
 
 				const stub = env.WAITLIST.get(env.WAITLIST.idFromName("waitlist"));
 				await stub.submit(email, maxAgents, pain, pay, body.target_platforms ?? [], body.dev_os ?? []);
+
+				if (env.DISCORD_WEBHOOK_URL) {
+					const platforms = (body.target_platforms ?? []).join(", ") || "none";
+					const os = (body.dev_os ?? []).join(", ") || "none";
+					const content = [
+						`**New waitlist submission**`,
+						`**Email:** ${email}`,
+						`**Max agents:** ${maxAgents}`,
+						`**Platforms:** ${platforms}`,
+						`**Dev OS:** ${os}`,
+						`**Pain:** ${pain}`,
+						`**Pay:** ${pay}`,
+					].join("\n");
+					fetch(env.DISCORD_WEBHOOK_URL, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ content }),
+					}).catch(() => {});
+				}
 
 				return Response.json({ ok: true });
 			} catch {

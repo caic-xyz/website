@@ -1,6 +1,6 @@
 # Website
 
-Cloudflare Workers project converted to `pnpm`.
+Source code for https://caic.xyz
 
 ## Common Commands
 
@@ -21,14 +21,16 @@ The `/admin/waitlist` route is protected by Google OAuth. Before deploying, conf
 | `GOOGLE_CLIENT_SECRET` | OAuth 2.0 client secret |
 | `SESSION_SECRET` | Random string (32+ chars) used to sign session cookies |
 | `ALLOWED_EMAILS` | Comma-separated list of Google emails permitted to access the admin page |
+| `DISCORD_WEBHOOK_URL` | *(optional)* Discord webhook URL for new-submission alerts |
 
 Set each secret with:
 
 ```sh
-pnpm exec wrangler secret put GOOGLE_CLIENT_ID
-pnpm exec wrangler secret put GOOGLE_CLIENT_SECRET
-pnpm exec wrangler secret put SESSION_SECRET
-pnpm exec wrangler secret put ALLOWED_EMAILS
+pnpm exec wrangler secret put GOOGLE_CLIENT_ID        # e.g. 123456789-abc.apps.googleusercontent.com
+pnpm exec wrangler secret put GOOGLE_CLIENT_SECRET    # e.g. GOCSPX-xxxxxxxxxxxxxxxxxxxxxxxx
+pnpm exec wrangler secret put SESSION_SECRET          # random string, 32+ chars (e.g. openssl rand -hex 32)
+pnpm exec wrangler secret put ALLOWED_EMAILS          # e.g. alice@gmail.com,bob@gmail.com
+pnpm exec wrangler secret put DISCORD_WEBHOOK_URL     # e.g. https://discord.com/api/webhooks/1234/abcdef
 ```
 
 The Google OAuth client must have `https://<your-domain>/auth/callback` as an authorized redirect URI.
