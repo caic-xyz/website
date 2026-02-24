@@ -356,6 +356,10 @@
 						</div>
 					</div>
 					<div class="form-group">
+						<label for="q-agents">What's the maximum number of parallel coding agents you've ever used? (e.g. two Cursor agents simultaneously)</label>
+						<input type="number" id="q-agents" name="max_agents" min="0" max="999" required />
+					</div>
+					<div class="form-group">
 						<label for="q-pain">What pain are you trying to solve?</label>
 						<textarea id="q-pain" name="pain" rows="2" required></textarea>
 					</div>
@@ -419,6 +423,7 @@
 						headers: {'Content-Type': 'application/json'},
 						body: JSON.stringify({
 							email: form.email.value,
+							max_agents: parseInt(form.max_agents.value, 10),
 							pain: form.pain.value,
 							pay: form.pay.value,
 							target_platforms,
