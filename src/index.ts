@@ -9,7 +9,7 @@ interface Submission {
 	email: string;
 	pain: string;
 	pay: string;
-	platform: string;
+	target_platforms: string;
 	dev_os: string;
 	created_at: string;
 }
@@ -23,7 +23,7 @@ export class WaitlistDO extends DurableObject<Env> {
 				email TEXT NOT NULL DEFAULT '',
 				pain TEXT NOT NULL,
 				pay TEXT NOT NULL,
-				platform TEXT NOT NULL DEFAULT '',
+				target_platforms TEXT NOT NULL DEFAULT '',
 				dev_os TEXT NOT NULL DEFAULT '',
 				created_at TEXT NOT NULL DEFAULT (datetime('now'))
 			)
@@ -35,28 +35,28 @@ export class WaitlistDO extends DurableObject<Env> {
 		if (!cols.has("email")) {
 			this.ctx.storage.sql.exec("ALTER TABLE submissions ADD COLUMN email TEXT NOT NULL DEFAULT ''");
 		}
-		if (!cols.has("platform")) {
-			this.ctx.storage.sql.exec("ALTER TABLE submissions ADD COLUMN platform TEXT NOT NULL DEFAULT ''");
+		if (!cols.has("target_platforms")) {
+			this.ctx.storage.sql.exec("ALTER TABLE submissions ADD COLUMN target_platforms TEXT NOT NULL DEFAULT ''");
 		}
 		if (!cols.has("dev_os")) {
 			this.ctx.storage.sql.exec("ALTER TABLE submissions ADD COLUMN dev_os TEXT NOT NULL DEFAULT ''");
 		}
 	}
 
-	async submit(email: string, pain: string, pay: string, platform: string[], devOs: string[]): Promise<void> {
+	async submit(email: string, pain: string, pay: string, targetPlatforms: string[], devOs: string[]): Promise<void> {
 		this.ctx.storage.sql.exec(
-			"INSERT INTO submissions (email, pain, pay, platform, dev_os) VALUES (?, ?, ?, ?, ?)",
+			"INSERT INTO submissions (email, pain, pay, target_platforms, dev_os) VALUES (?, ?, ?, ?, ?)",
 			email,
 			pain,
 			pay,
-			JSON.stringify(platform),
+			JSON.stringify(targetPlatforms),
 			JSON.stringify(devOs),
 		);
 	}
 
 	async list(): Promise<Submission[]> {
 		return this.ctx.storage.sql
-			.exec("SELECT id, email, pain, pay, platform, dev_os, created_at FROM submissions ORDER BY id DESC")
+			.exec("SELECT id, email, pain, pay, target_platforms, dev_os, created_at FROM submissions ORDER BY id DESC")
 			.toArray() as Submission[];
 	}
 }
@@ -71,7 +71,7 @@ export default {
 					email?: string;
 					pain?: string;
 					pay?: string;
-					platform?: string[];
+					target_platforms?: string[];
 					dev_os?: string[];
 				}>();
 				const email = body.email?.trim();
@@ -82,7 +82,7 @@ export default {
 				}
 
 				const stub = env.WAITLIST.get(env.WAITLIST.idFromName("waitlist"));
-				await stub.submit(email, pain, pay, body.platform ?? [], body.dev_os ?? []);
+				await stub.submit(email, pain, pay, body.target_platforms ?? [], body.dev_os ?? []);
 
 				return Response.json({ ok: true });
 			} catch {
@@ -98,7 +98,7 @@ export default {
 				try { return (JSON.parse(json) as string[]).map(esc).join(", "); } catch { return esc(json); }
 			};
 			const tableRows = rows.map(r =>
-				`<tr><td>${r.id}</td><td>${esc(r.email)}</td><td>${esc(r.pain)}</td><td>${esc(r.pay)}</td><td>${fmtArr(r.platform)}</td><td>${fmtArr(r.dev_os)}</td><td>${esc(r.created_at)}</td></tr>`
+				`<tr><td>${r.id}</td><td>${esc(r.email)}</td><td>${esc(r.pain)}</td><td>${esc(r.pay)}</td><td>${fmtArr(r.target_platforms)}</td><td>${fmtArr(r.dev_os)}</td><td>${esc(r.created_at)}</td></tr>`
 			).join("\n");
 			const html = `<!doctype html>
 <html lang="en">
@@ -124,7 +124,7 @@ td{white-space:pre-wrap;max-width:300px}
 <p class="count">${rows.length} total</p>
 ${rows.length === 0
 	? '<p class="empty"># no submissions yet</p>'
-	: `<table><thead><tr><th>#</th><th>email</th><th>pain</th><th>pay</th><th>platform</th><th>dev os</th><th>time</th></tr></thead><tbody>${tableRows}</tbody></table>`}
+	: `<table><thead><tr><th>#</th><th>email</th><th>pain</th><th>pay</th><th>target platforms</th><th>dev os</th><th>time</th></tr></thead><tbody>${tableRows}</tbody></table>`}
 </body>
 </html>`;
 			return new Response(html, { headers: { "Content-Type": "text/html;charset=UTF-8" } });

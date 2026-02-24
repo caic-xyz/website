@@ -321,16 +321,16 @@
 					<div class="form-group">
 						<label>Which platform do you develop for?</label>
 						<div class="checkbox-group">
-							<label><input type="checkbox" name="platform" value="Windows"> Windows</label>
-							<label><input type="checkbox" name="platform" value="macOS"> macOS</label>
-							<label><input type="checkbox" name="platform" value="Linux"> Linux</label>
-							<label><input type="checkbox" name="platform" value="iOS"> iOS</label>
-							<label><input type="checkbox" name="platform" value="Android"> Android</label>
-							<label><input type="checkbox" name="platform" value="XBox"> XBox</label>
-							<label><input type="checkbox" name="platform" value="Playstation"> Playstation</label>
-							<label><input type="checkbox" name="platform" value="Micro-controllers"> Micro-controllers (ESP32, STM32, etc)</label>
-							<label><input type="checkbox" name="platform" value="Other"> Other</label>
-							<textarea id="platform-other" class="other-text" name="platform_other" placeholder="specify..."></textarea>
+							<label><input type="checkbox" name="target_platforms" value="Windows"> Windows</label>
+							<label><input type="checkbox" name="target_platforms" value="macOS"> macOS</label>
+							<label><input type="checkbox" name="target_platforms" value="Linux"> Linux</label>
+							<label><input type="checkbox" name="target_platforms" value="iOS"> iOS</label>
+							<label><input type="checkbox" name="target_platforms" value="Android"> Android</label>
+							<label><input type="checkbox" name="target_platforms" value="XBox"> XBox</label>
+							<label><input type="checkbox" name="target_platforms" value="Playstation"> Playstation</label>
+							<label><input type="checkbox" name="target_platforms" value="Micro-controllers"> Micro-controllers (ESP32, STM32, etc)</label>
+							<label><input type="checkbox" name="target_platforms" value="Other"> Other</label>
+							<textarea id="platform-other" class="other-text" name="target_platforms_other" placeholder="specify..."></textarea>
 						</div>
 					</div>
 					<div class="form-group">
@@ -369,13 +369,15 @@
 				msg.style.display = 'none';
 
 				try {
-					const platform = getChecked('platform');
-					if (platform.includes('Other') && form.platform_other.value.trim()) {
-						platform[platform.indexOf('Other')] = 'Other: ' + form.platform_other.value.trim();
+					const target_platforms = getChecked('target_platforms');
+					const otherPlatform = form.target_platforms_other.value.trim();
+					if (otherPlatform) {
+						target_platforms.push(otherPlatform);
 					}
 					const dev_os = getChecked('dev_os');
-					if (dev_os.includes('Other') && form.dev_os_other.value.trim()) {
-						dev_os[dev_os.indexOf('Other')] = 'Other: ' + form.dev_os_other.value.trim();
+					const otherOs = form.dev_os_other.value.trim();
+					if (otherOs) {
+						dev_os.push(otherOs);
 					}
 
 					const res = await fetch('/api/waitlist', {
@@ -385,7 +387,7 @@
 							email: form.email.value,
 							pain: form.pain.value,
 							pay: form.pay.value,
-							platform,
+							target_platforms,
 							dev_os,
 						}),
 					});
