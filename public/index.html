@@ -123,6 +123,7 @@
 				align-items: center;
 				justify-content: center;
 				z-index: 10;
+				overflow-y: auto;
 			}
 
 			.overlay.open {
@@ -135,6 +136,7 @@
 				padding: 2rem;
 				max-width: 520px;
 				width: 90%;
+				margin: 2rem auto;
 			}
 
 			.form-panel h2 {
@@ -152,16 +154,32 @@
 				margin-bottom: 1.5rem;
 			}
 
-			.form-group label {
+			.form-group > label {
 				display: block;
 				color: var(--fg);
 				font-size: 0.85rem;
 				margin-bottom: 0.4rem;
 			}
 
-			.form-group label::before {
+			.form-group > label::before {
 				content: '# ';
 				color: var(--dim);
+			}
+
+			.form-group input[type="email"] {
+				width: 100%;
+				background: #111;
+				color: var(--fg);
+				border: 1px solid #333;
+				font-family: var(--font);
+				font-size: 0.85rem;
+				padding: 0.5rem;
+				box-sizing: border-box;
+			}
+
+			.form-group input[type="email"]:focus {
+				outline: none;
+				border-color: var(--accent);
 			}
 
 			.form-group textarea {
@@ -178,6 +196,49 @@
 			}
 
 			.form-group textarea:focus {
+				outline: none;
+				border-color: var(--accent);
+			}
+
+			.checkbox-group {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.4rem 1rem;
+				margin-top: 0.3rem;
+			}
+
+			.checkbox-group label {
+				display: flex;
+				align-items: center;
+				gap: 0.4rem;
+				font-size: 0.8rem;
+				cursor: pointer;
+			}
+
+			.checkbox-group label::before {
+				content: none;
+			}
+
+			.checkbox-group input[type="checkbox"] {
+				accent-color: var(--accent);
+			}
+
+			.other-text {
+				width: 100%;
+				min-height: 36px;
+				background: #111;
+				color: var(--fg);
+				border: 1px solid #333;
+				font-family: var(--font);
+				font-size: 0.8rem;
+				padding: 0.4rem;
+				resize: vertical;
+				box-sizing: border-box;
+				margin-top: 0.3rem;
+				display: none;
+			}
+
+			.other-text:focus {
 				outline: none;
 				border-color: var(--accent);
 			}
@@ -247,12 +308,41 @@
 				<h2>waitlist</h2>
 				<form id="waitlist-form">
 					<div class="form-group">
+						<label for="q-email">Email</label>
+						<input type="email" id="q-email" name="email" required />
+					</div>
+					<div class="form-group">
 						<label for="q-pain">What pain are you trying to solve?</label>
 						<textarea id="q-pain" name="pain" required></textarea>
 					</div>
 					<div class="form-group">
 						<label for="q-pay">What would you be willing to pay for and how much?</label>
 						<textarea id="q-pay" name="pay" required></textarea>
+					</div>
+					<div class="form-group">
+						<label>Which platform do you develop for?</label>
+						<div class="checkbox-group">
+							<label><input type="checkbox" name="platform" value="Windows"> Windows</label>
+							<label><input type="checkbox" name="platform" value="macOS"> macOS</label>
+							<label><input type="checkbox" name="platform" value="Linux"> Linux</label>
+							<label><input type="checkbox" name="platform" value="iOS"> iOS</label>
+							<label><input type="checkbox" name="platform" value="Android"> Android</label>
+							<label><input type="checkbox" name="platform" value="XBox"> XBox</label>
+							<label><input type="checkbox" name="platform" value="Playstation"> Playstation</label>
+							<label><input type="checkbox" name="platform" value="Micro-controllers"> Micro-controllers (ESP32, STM32, etc)</label>
+							<label><input type="checkbox" name="platform" value="Other" onchange="document.getElementById('platform-other').style.display=this.checked?'block':'none'"> Other</label>
+							<textarea id="platform-other" class="other-text" name="platform_other" placeholder="specify..."></textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label>Which OS do you develop on?</label>
+						<div class="checkbox-group">
+							<label><input type="checkbox" name="dev_os" value="Windows"> Windows</label>
+							<label><input type="checkbox" name="dev_os" value="macOS"> macOS</label>
+							<label><input type="checkbox" name="dev_os" value="Linux"> Linux</label>
+							<label><input type="checkbox" name="dev_os" value="Other" onchange="document.getElementById('dev-os-other').style.display=this.checked?'block':'none'"> Other</label>
+							<textarea id="dev-os-other" class="other-text" name="dev_os_other" placeholder="specify..."></textarea>
+						</div>
 					</div>
 					<div class="form-actions">
 						<button type="button" class="btn-cancel"
@@ -265,6 +355,10 @@
 		</div>
 
 		<script>
+			function getChecked(name) {
+				return [...document.querySelectorAll('input[name="' + name + '"]:checked')].map(el => el.value);
+			}
+
 			document.getElementById('waitlist-form').addEventListener('submit', async (e) => {
 				e.preventDefault();
 				const form = e.target;
@@ -276,12 +370,24 @@
 				msg.style.display = 'none';
 
 				try {
+					const platform = getChecked('platform');
+					if (platform.includes('Other') && form.platform_other.value.trim()) {
+						platform[platform.indexOf('Other')] = 'Other: ' + form.platform_other.value.trim();
+					}
+					const dev_os = getChecked('dev_os');
+					if (dev_os.includes('Other') && form.dev_os_other.value.trim()) {
+						dev_os[dev_os.indexOf('Other')] = 'Other: ' + form.dev_os_other.value.trim();
+					}
+
 					const res = await fetch('/api/waitlist', {
 						method: 'POST',
 						headers: {'Content-Type': 'application/json'},
 						body: JSON.stringify({
+							email: form.email.value,
 							pain: form.pain.value,
 							pay: form.pay.value,
+							platform,
+							dev_os,
 						}),
 					});
 
@@ -293,8 +399,9 @@
 					msg.textContent = '> submitted. we\'ll be in touch.';
 					msg.style.color = 'var(--accent)';
 					msg.style.display = 'block';
-					form.pain.value = '';
-					form.pay.value = '';
+					form.reset();
+					document.getElementById('platform-other').style.display = 'none';
+					document.getElementById('dev-os-other').style.display = 'none';
 				} catch (err) {
 					msg.textContent = '> error: ' + err.message;
 					msg.style.color = '#ff4141';
