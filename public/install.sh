@@ -55,7 +55,12 @@ install_tool() {
     [ -n "$tag" ] || die "could not determine latest version of $repo"
     version="${tag#v}"
 
-    archive="${binary}_${version}_${os}_${arch}.tar.gz"
+    # macOS ships a universal binary (darwin_all); Linux uses the specific arch.
+    if [ "$os" = "darwin" ]; then
+        archive="${binary}_${version}_${os}_all.tar.gz"
+    else
+        archive="${binary}_${version}_${os}_${arch}.tar.gz"
+    fi
     url="https://github.com/${repo}/releases/download/${tag}/${archive}"
 
     tmpdir="$(mktemp -d)"
