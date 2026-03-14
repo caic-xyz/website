@@ -14,7 +14,7 @@
 		},
 		{
 			"tag": "v2",
-			"new_classes": ["VersionDO"]
+			"new_sqlite_classes": ["VersionDO"]
 		}
 	],
 	"assets": {
