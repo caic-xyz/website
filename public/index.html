@@ -36,8 +36,6 @@
 			main {
 				max-width: 600px;
 				width: 100%;
-				position: relative;
-				z-index: 2;
 			}
 
 			h1 {
@@ -302,47 +300,10 @@
 				font-size: 0.85rem;
 				margin-top: 1rem;
 			}
-
-			/* Background effects */
-			#bg-canvas {
-				position: fixed;
-				inset: 0;
-				z-index: 0;
-				pointer-events: none;
-			}
-
-			.scanlines {
-				position: fixed;
-				inset: 0;
-				z-index: 1;
-				pointer-events: none;
-				background: repeating-linear-gradient(
-					0deg,
-					transparent,
-					transparent 3px,
-					rgba(0, 0, 0, 0.04) 3px,
-					rgba(0, 0, 0, 0.04) 4px
-				);
-			}
-
-			.vignette {
-				position: fixed;
-				inset: 0;
-				z-index: 1;
-				pointer-events: none;
-				background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.55) 100%);
-			}
-
-			.overlay {
-				z-index: 10;
-			}
 		</style>
 	</head>
 
 	<body>
-		<canvas id="bg-canvas"></canvas>
-		<div class="scanlines"></div>
-		<div class="vignette"></div>
 		<main>
 			<h1 id="heading">caic.xyz<span class="cursor"></span></h1>
 
@@ -531,53 +492,8 @@
 				ws.addEventListener('error', () => ws.close());
 			}
 			connectVersionWs();
-
-		// Matrix rain background
-		(function () {
-			const canvas = document.getElementById('bg-canvas');
-			const ctx = canvas.getContext('2d');
-			const CHARS = '0123456789abcdef{}[]()<>_#$%|=+-*/\\;:.!?';
-			const FS = 14;
-			let drops = [];
-
-			function init() {
-				canvas.width = window.innerWidth;
-				canvas.height = window.innerHeight;
-				const cols = Math.ceil(canvas.width / FS);
-				const prev = drops.slice();
-				drops = Array.from({ length: cols }, (_, i) =>
-					prev[i] !== undefined ? prev[i] : -(Math.random() * (canvas.height / FS))
-				);
-			}
-
-			window.addEventListener('resize', init);
-			init();
-
-			function frame() {
-				ctx.fillStyle = 'rgba(10,10,10,0.08)';
-				ctx.fillRect(0, 0, canvas.width, canvas.height);
-				ctx.font = `${FS}px 'JetBrains Mono','Courier New',monospace`;
-
-				for (let i = 0; i < drops.length; i++) {
-					if (drops[i] < 0) {
-						drops[i] += 0.5;
-						continue;
-					}
-					const y = Math.floor(drops[i]) * FS;
-					const c = CHARS[Math.random() * CHARS.length | 0];
-					ctx.fillStyle = 'rgba(0,255,65,0.13)';
-					ctx.fillText(c, i * FS, y);
-					drops[i] += 0.5;
-					if (y > canvas.height && Math.random() > 0.975) {
-						drops[i] = -(Math.random() * (canvas.height / FS * 0.4));
-					}
-				}
-			}
-
-			setInterval(frame, 50);
-		})();
 		</script>
-	<footer style="position: fixed; bottom: 1rem; font-size: 0.75rem; color: var(--dim); z-index: 2;"><a href="mailto:info@caic.xyz" style="color: var(--dim);">info@caic.xyz</a></footer>
+	<footer style="position: fixed; bottom: 1rem; font-size: 0.75rem; color: var(--dim);"><a href="mailto:info@caic.xyz" style="color: var(--dim);">info@caic.xyz</a></footer>
 	</body>
 
 </html>
