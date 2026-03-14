@@ -1,6 +1,8 @@
 import { DurableObject } from "cloudflare:workers";
 import { handleCallback, handleLogin, handleLogout, verifySession } from "./auth";
 
+declare const BUILD_VERSION: string;
+
 interface Env {
 	WAITLIST: DurableObjectNamespace<WaitlistDO>;
 	DISCORD_WEBHOOK_URL: string;
@@ -136,6 +138,10 @@ export default {
 			} catch {
 				return Response.json({ error: "invalid request" }, { status: 400 });
 			}
+		}
+
+		if (url.pathname === "/api/version" && request.method === "GET") {
+			return Response.json({ version: BUILD_VERSION });
 		}
 
 		if (url.pathname === "/auth/google" && request.method === "GET") {
