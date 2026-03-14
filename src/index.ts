@@ -140,8 +140,15 @@ export default {
 			}
 		}
 
-		if (url.pathname === "/api/version" && request.method === "GET") {
-			return Response.json({ version: BUILD_VERSION });
+		if (url.pathname === "/api/ws" && request.method === "GET") {
+			if (request.headers.get("Upgrade") !== "websocket") {
+				return new Response("Expected WebSocket upgrade", { status: 426 });
+			}
+			const pair = new WebSocketPair();
+			pair[1].accept();
+			pair[1].send(JSON.stringify({ version: BUILD_VERSION }));
+			pair[1].close(1000, "done");
+			return new Response(null, { status: 101, webSocket: pair[0] });
 		}
 
 		if (url.pathname === "/auth/google" && request.method === "GET") {

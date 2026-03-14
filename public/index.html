@@ -470,19 +470,28 @@
 
 			// Auto-refresh on new deployment
 			let currentVersion = null;
-			async function checkVersion() {
-				try {
-					const res = await fetch('/api/version');
-					const { version } = await res.json();
+			let reconnectDelay = 1000;
+			const MAX_RECONNECT_DELAY = 30000;
+
+			function connectVersionWs() {
+				const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+				const ws = new WebSocket(`${proto}//${location.host}/api/ws`);
+				ws.addEventListener('message', (e) => {
+					const { version } = JSON.parse(e.data);
 					if (currentVersion === null) {
 						currentVersion = version;
+						reconnectDelay = 1000;
 					} else if (version !== currentVersion) {
 						location.reload();
 					}
-				} catch {}
+				});
+				ws.addEventListener('close', () => {
+					setTimeout(connectVersionWs, reconnectDelay);
+					reconnectDelay = Math.min(reconnectDelay * 2, MAX_RECONNECT_DELAY);
+				});
+				ws.addEventListener('error', () => ws.close());
 			}
-			checkVersion();
-			setInterval(checkVersion, 30000);
+			connectVersionWs();
 		</script>
 	<footer style="position: fixed; bottom: 1rem; font-size: 0.75rem; color: var(--dim);"><a href="mailto:info@caic.xyz" style="color: var(--dim);">info@caic.xyz</a></footer>
 	</body>
