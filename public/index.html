@@ -476,11 +476,11 @@
 			function connectVersionWs() {
 				const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
 				const ws = new WebSocket(`${proto}//${location.host}/api/ws`);
+				ws.addEventListener('open', () => { reconnectDelay = 1000; });
 				ws.addEventListener('message', (e) => {
 					const { version } = JSON.parse(e.data);
 					if (currentVersion === null) {
 						currentVersion = version;
-						reconnectDelay = 1000;
 					} else if (version !== currentVersion) {
 						location.reload();
 					}

@@ -11,6 +11,10 @@
 		{
 			"tag": "v1",
 			"new_sqlite_classes": ["WaitlistDO"]
+		},
+		{
+			"tag": "v2",
+			"new_classes": ["VersionDO"]
 		}
 	],
 	"assets": {
@@ -24,6 +28,10 @@
 			{
 				"name": "WAITLIST",
 				"class_name": "WaitlistDO"
+			},
+			{
+				"name": "VERSION",
+				"class_name": "VersionDO"
 			}
 		]
 	},

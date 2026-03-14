@@ -5,6 +5,7 @@ declare const BUILD_VERSION: string;
 
 interface Env {
 	WAITLIST: DurableObjectNamespace<WaitlistDO>;
+	VERSION: DurableObjectNamespace<VersionDO>;
 	DISCORD_WEBHOOK_URL: string;
 	GOOGLE_CLIENT_ID: string;
 	GOOGLE_CLIENT_SECRET: string;
@@ -21,6 +22,31 @@ interface Submission {
 	target_platforms: string;
 	dev_os: string;
 	created_at: string;
+}
+
+export class VersionDO extends DurableObject<Env> {
+	async fetch(request: Request): Promise<Response> {
+		if (request.headers.get("Upgrade") !== "websocket") {
+			return new Response("Expected WebSocket upgrade", { status: 426 });
+		}
+		const incoming = request.headers.get("X-Build-Version") ?? "dev";
+		const stored = await this.ctx.storage.get<string>("version");
+		if (stored !== undefined && stored !== incoming) {
+			const payload = JSON.stringify({ version: incoming });
+			for (const ws of this.ctx.getWebSockets()) {
+				try { ws.send(payload); } catch {}
+			}
+		}
+		await this.ctx.storage.put("version", incoming);
+		const pair = new WebSocketPair();
+		this.ctx.acceptWebSocket(pair[1]);
+		pair[1].send(JSON.stringify({ version: incoming }));
+		return new Response(null, { status: 101, webSocket: pair[0] });
+	}
+
+	webSocketMessage(): void {}
+	webSocketClose(ws: WebSocket): void { ws.close(); }
+	webSocketError(ws: WebSocket): void { ws.close(); }
 }
 
 export class WaitlistDO extends DurableObject<Env> {
@@ -141,14 +167,11 @@ export default {
 		}
 
 		if (url.pathname === "/api/ws" && request.method === "GET") {
-			if (request.headers.get("Upgrade") !== "websocket") {
-				return new Response("Expected WebSocket upgrade", { status: 426 });
-			}
-			const pair = new WebSocketPair();
-			pair[1].accept();
-			pair[1].send(JSON.stringify({ version: BUILD_VERSION }));
-			pair[1].close(1000, "done");
-			return new Response(null, { status: 101, webSocket: pair[0] });
+			const stub = env.VERSION.get(env.VERSION.idFromName("version"));
+			const wsRequest = new Request(request, {
+				headers: { ...Object.fromEntries(request.headers), "X-Build-Version": BUILD_VERSION },
+			});
+			return stub.fetch(wsRequest);
 		}
 
 		if (url.pathname === "/auth/google" && request.method === "GET") {
