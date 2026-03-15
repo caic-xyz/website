@@ -351,88 +351,10 @@
 				font-size: 0.85rem;
 				margin-top: 1rem;
 			}
-
-			/* Background */
-			.bg-svg {
-				position: fixed;
-				inset: 0;
-				width: 100%;
-				height: 100%;
-				z-index: 0;
-				pointer-events: none;
-			}
-
-			main, .github-icon, footer {
-				position: relative;
-				z-index: 1;
-			}
 		</style>
 	</head>
 
 	<body>
-		<!-- Background SVG -->
-		<svg class="bg-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-			<defs>
-				<!-- Grid pattern -->
-				<pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
-					<line x1="60" y1="0" x2="60" y2="60" stroke="#00ff41" stroke-width="0.3" opacity="0.07"/>
-					<line x1="0" y1="60" x2="60" y2="60" stroke="#00ff41" stroke-width="0.3" opacity="0.07"/>
-				</pattern>
-				<!-- Glow filter for nodes -->
-				<filter id="node-glow" x="-100%" y="-100%" width="300%" height="300%">
-					<feGaussianBlur stdDeviation="3" result="blur"/>
-					<feComposite in="SourceGraphic" in2="blur" operator="over"/>
-				</filter>
-				<!-- Radial fade so edges are darker -->
-				<radialGradient id="vignette" cx="50%" cy="50%" r="70%">
-					<stop offset="0%" stop-color="transparent"/>
-					<stop offset="100%" stop-color="#0a0a0a"/>
-				</radialGradient>
-			</defs>
-
-			<!-- Grid -->
-			<rect width="100%" height="100%" fill="url(#grid)"/>
-
-			<!-- Horizontal scanlines -->
-			<g opacity="0.025">
-				<line x1="0" y1="20%" x2="100%" y2="20%" stroke="#00ff41" stroke-width="0.5"/>
-				<line x1="0" y1="40%" x2="100%" y2="40%" stroke="#00ff41" stroke-width="0.5"/>
-				<line x1="0" y1="60%" x2="100%" y2="60%" stroke="#00ff41" stroke-width="0.5"/>
-				<line x1="0" y1="80%" x2="100%" y2="80%" stroke="#00ff41" stroke-width="0.5"/>
-			</g>
-
-			<!-- Connection lines -->
-			<g stroke="#00ff41" stroke-width="0.5" opacity="0.06">
-				<line x1="10%" y1="15%" x2="25%" y2="30%"><animate attributeName="opacity" values="0.03;0.08;0.03" dur="7s" repeatCount="indefinite"/></line>
-				<line x1="25%" y1="30%" x2="40%" y2="20%"><animate attributeName="opacity" values="0.05;0.1;0.05" dur="9s" repeatCount="indefinite"/></line>
-				<line x1="70%" y1="25%" x2="85%" y2="40%"><animate attributeName="opacity" values="0.04;0.09;0.04" dur="8s" repeatCount="indefinite"/></line>
-				<line x1="60%" y1="70%" x2="80%" y2="80%"><animate attributeName="opacity" values="0.03;0.07;0.03" dur="11s" repeatCount="indefinite"/></line>
-				<line x1="15%" y1="75%" x2="35%" y2="65%"><animate attributeName="opacity" values="0.04;0.08;0.04" dur="10s" repeatCount="indefinite"/></line>
-				<line x1="85%" y1="15%" x2="75%" y2="35%"><animate attributeName="opacity" values="0.03;0.09;0.03" dur="6s" repeatCount="indefinite"/></line>
-				<line x1="40%" y1="80%" x2="55%" y2="60%"><animate attributeName="opacity" values="0.05;0.08;0.05" dur="12s" repeatCount="indefinite"/></line>
-			</g>
-
-			<!-- Floating nodes -->
-			<g filter="url(#node-glow)">
-				<circle cx="10%" cy="15%" r="1.5" fill="#00ff41" opacity="0.15"><animate attributeName="opacity" values="0.05;0.2;0.05" dur="4s" repeatCount="indefinite"/><animate attributeName="r" values="1;2;1" dur="4s" repeatCount="indefinite"/></circle>
-				<circle cx="25%" cy="30%" r="1" fill="#00ff41" opacity="0.1"><animate attributeName="opacity" values="0.05;0.15;0.05" dur="5s" repeatCount="indefinite" begin="1s"/></circle>
-				<circle cx="40%" cy="20%" r="1.5" fill="#00ff41" opacity="0.12"><animate attributeName="opacity" values="0.04;0.18;0.04" dur="6s" repeatCount="indefinite" begin="2s"/><animate attributeName="r" values="1;2.5;1" dur="6s" repeatCount="indefinite" begin="2s"/></circle>
-				<circle cx="70%" cy="25%" r="1" fill="#00ff41" opacity="0.1"><animate attributeName="opacity" values="0.05;0.15;0.05" dur="4.5s" repeatCount="indefinite" begin="0.5s"/></circle>
-				<circle cx="85%" cy="40%" r="1.5" fill="#00ff41" opacity="0.15"><animate attributeName="opacity" values="0.05;0.2;0.05" dur="5.5s" repeatCount="indefinite" begin="1.5s"/><animate attributeName="r" values="1;2;1" dur="5.5s" repeatCount="indefinite" begin="1.5s"/></circle>
-				<circle cx="60%" cy="70%" r="1" fill="#00ff41" opacity="0.08"><animate attributeName="opacity" values="0.03;0.12;0.03" dur="7s" repeatCount="indefinite" begin="3s"/></circle>
-				<circle cx="80%" cy="80%" r="1.5" fill="#00ff41" opacity="0.12"><animate attributeName="opacity" values="0.04;0.16;0.04" dur="6s" repeatCount="indefinite" begin="2.5s"/><animate attributeName="r" values="1;2;1" dur="6s" repeatCount="indefinite" begin="2.5s"/></circle>
-				<circle cx="15%" cy="75%" r="1" fill="#00ff41" opacity="0.1"><animate attributeName="opacity" values="0.05;0.14;0.05" dur="5s" repeatCount="indefinite" begin="1s"/></circle>
-				<circle cx="35%" cy="65%" r="1.5" fill="#00ff41" opacity="0.1"><animate attributeName="opacity" values="0.04;0.15;0.04" dur="8s" repeatCount="indefinite" begin="4s"/><animate attributeName="r" values="1;2;1" dur="8s" repeatCount="indefinite" begin="4s"/></circle>
-				<circle cx="50%" cy="45%" r="2" fill="#00ff41" opacity="0.08"><animate attributeName="opacity" values="0.03;0.12;0.03" dur="9s" repeatCount="indefinite" begin="2s"/><animate attributeName="r" values="1.5;3;1.5" dur="9s" repeatCount="indefinite" begin="2s"/></circle>
-				<circle cx="85%" cy="15%" r="1" fill="#00ff41" opacity="0.1"><animate attributeName="opacity" values="0.05;0.15;0.05" dur="4s" repeatCount="indefinite" begin="3s"/></circle>
-				<circle cx="75%" cy="35%" r="1.5" fill="#00ff41" opacity="0.12"><animate attributeName="opacity" values="0.04;0.18;0.04" dur="7s" repeatCount="indefinite" begin="1s"/><animate attributeName="r" values="1;2;1" dur="7s" repeatCount="indefinite" begin="1s"/></circle>
-				<circle cx="55%" cy="60%" r="1" fill="#00ff41" opacity="0.08"><animate attributeName="opacity" values="0.03;0.12;0.03" dur="6s" repeatCount="indefinite" begin="3.5s"/></circle>
-				<circle cx="40%" cy="80%" r="1.5" fill="#00ff41" opacity="0.1"><animate attributeName="opacity" values="0.04;0.14;0.04" dur="5s" repeatCount="indefinite" begin="2s"/><animate attributeName="r" values="1;2;1" dur="5s" repeatCount="indefinite" begin="2s"/></circle>
-			</g>
-
-			<!-- Vignette overlay -->
-			<rect width="100%" height="100%" fill="url(#vignette)"/>
-		</svg>
 		<div class="github-icon">
 			<a href="https://github.com/caic-xyz/" target="_blank" rel="noopener" aria-label="GitHub">
 				<svg width="28" height="28" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
